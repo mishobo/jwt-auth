@@ -1,6 +1,10 @@
 package com.husseinmishobo.authorization.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,23 +14,34 @@ import java.util.Date;
 
 @Setter
 @Getter
-@Table(name = "users", schema = "users")
+@Table(
+        name = "users",
+        schema = "users",
+        indexes = { @Index(name = "idx_users_email", columnList = "email")}
+)
 @Entity
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Integer id;
 
-    @Column(nullable = false)
+    @NotBlank
+    @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @Column(unique = true, length = 100, nullable = false)
+    @Email
+    @NotBlank
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    @JsonIgnore
+    @NotBlank
+    @Size(min = 8)
     @Column(nullable = false)
     private String password;
+
 
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
